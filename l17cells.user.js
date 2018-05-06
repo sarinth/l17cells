@@ -1,13 +1,13 @@
 // ==UserScript==
-// @id             iitc-plugin-l17cells@vib
-// @name           IITC plugin: Show Level 17 Cells
-// @author         vib
+// @id             iitc-plugin-s2cells
+// @name           IITC plugin: Show s2 level 14, 17, 19 cells with different colors
+// @author         sarinth
 // @category       Layer
-// @version        0.1.5
-// @namespace      https://github.com/vibrunazo/l17cells
-// @updateURL      https://raw.githubusercontent.com/vibrunazo/l17cells/master/l17cells.meta.js
-// @downloadURL    https://raw.githubusercontent.com/vibrunazo/l17cells/master/l17cells.user.js
-// @description    IITC: Shows level 17 cells on the map
+// @version        0.1
+// @namespace      https://github.com/sarinth/s2
+// @updateURL      https://raw.githubusercontent.com/sarinth/s2/master/s2cells.meta.js
+// @downloadURL    https://raw.githubusercontent.com/sarinth/s2/master/s2cells.user.js
+// @description    IITC: Show s2 level 14, 17, 19 cells with different colors
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
@@ -19,6 +19,7 @@
 // @grant          none
 // ==/UserScript==
 
+// fork of https://github.com/vibrunazo/l17cells
 // This plugin is a simple fork of the Regions plugin by Jonatkins
 //
 // original plugin at:
@@ -31,45 +32,18 @@ function wrapper(plugin_info) {
 
   //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
   //(leaving them in place might break the 'About IITC' page or break update checks)
-  plugin_info.buildName = 'l17cells';
-  plugin_info.dateTimeVersion = '20170109.010105';
-  plugin_info.pluginId = 'l17cells';
+  plugin_info.buildName = 's2cells';
+  plugin_info.dateTimeVersion = '20180506';
+  plugin_info.pluginId = 's2cells';
   //END PLUGIN AUTHORS NOTE
-
 
 
   // PLUGIN START ////////////////////////////////////////////////////////
 
   // use own namespace for plugin
-  window.plugin.showcells = function() {};
+  window.plugin.s2cells = function() {};
 
-  var input=document.createElement("input");
-  input.type="button";
-  input.value="Set Level";
-  input.onclick = setCellLevel;
-  input.setAttribute("style", "font-size:18px;position:absolute;top:120px;left:40px;color:black;cursor:pointer;pointer-events:all;z-index:2999;");
-  document.body.appendChild(input);
-
-  window.plugin.showcells.cellLevel = 17;
-
-  function setCellLevel()
-  {
-    var newCellLevel = prompt("Set a cell level", "17");
-    newCellLevel = parseInt(newCellLevel, 10);
-    //alert("new cell=" + newCellLevel);
-    if (newCellLevel !== isNaN && newCellLevel >= 2 && newCellLevel <= 20) {
-      //alert("Valid cell value");
-      window.plugin.showcells.cellLevel = newCellLevel;
-      window.plugin.regions.update();
-    } else {
-      alert("Invalid cell value. Must be a number between 2 and 20");
-    }
-  }
-
-  // use own namespace for plugin
-  window.plugin.regions = function() {};
-
-  window.plugin.regions.setup  = function() {
+  window.plugin.s2cells.setup = function() {
     /// S2 Geometry functions
     // the regional scoreboard is based on a level 6 S2 Cell
     // - https://docs.google.com/presentation/d/1Hl4KapfAENAOf4gv-pSngKwvS_jwNVHRPZTTDzXXn6Q/view?pli=1#slide=id.i22
@@ -97,7 +71,6 @@ function wrapper(plugin_info) {
     (function() {
 
       window.S2 = {};
-
 
       var LatLngToXYZ = function(latLng) {
         var d2r = Math.PI/180.0;
@@ -154,9 +127,6 @@ function wrapper(plugin_info) {
         return [u,v];
       }
 
-
-
-
       var XYZToFaceUV = function(xyz) {
         var face = largestAbsComponent(xyz);
 
@@ -164,7 +134,7 @@ function wrapper(plugin_info) {
           face += 3;
         }
 
-        uv = faceXYZToUV (face,xyz);
+        var uv = faceXYZToUV (face,xyz);
 
         return [face, uv];
       };
@@ -184,7 +154,6 @@ function wrapper(plugin_info) {
         }
       };
 
-
       var STToUV = function(st) {
         var singleSTtoUV = function(st) {
           if (st >= 0.5) {
@@ -196,8 +165,6 @@ function wrapper(plugin_info) {
 
         return [singleSTtoUV(st[0]), singleSTtoUV(st[1])];
       };
-
-
 
       var UVToST = function(uv) {
         var singleUVtoST = function(uv) {
@@ -211,7 +178,6 @@ function wrapper(plugin_info) {
         return [singleUVtoST(uv[0]), singleUVtoST(uv[1])];
       };
 
-
       var STToIJ = function(st,order) {
         var maxSize = (1<<order);
 
@@ -222,7 +188,6 @@ function wrapper(plugin_info) {
 
         return [singleSTtoIJ(st[0]), singleSTtoIJ(st[1])];
       };
-
 
       var IJToST = function(ij,order,offsets) {
         var maxSize = (1<<order);
@@ -266,9 +231,6 @@ function wrapper(plugin_info) {
         return positions;
       };
 
-
-
-
       // S2Cell class
 
       S2.S2Cell = function(){};
@@ -294,7 +256,6 @@ function wrapper(plugin_info) {
 
         return cell;
       };
-
 
       S2.S2Cell.prototype.toString = function() {
         return 'F'+this.face+'ij['+this.ij[0]+','+this.ij[1]+']@'+this.level;
@@ -326,7 +287,6 @@ function wrapper(plugin_info) {
         }
         return result;
       };
-
 
       S2.S2Cell.prototype.getFaceAndQuads = function() {
         var quads = pointToHilbertQuadList(this.ij[0], this.ij[1], this.level);
@@ -363,7 +323,6 @@ function wrapper(plugin_info) {
         var j = this.ij[1];
         var level = this.level;
 
-
         return [
           fromFaceIJWrap(face, [i-1,j], level),
           fromFaceIJWrap(face, [i,j-1], level),
@@ -373,123 +332,34 @@ function wrapper(plugin_info) {
 
       };
 
-
     })();
 
+    window.plugin.s2cells.regionLayer = L.layerGroup();
 
-    window.plugin.regions.regionLayer = L.layerGroup();
+    addLayerGroup('S2 Cells', window.plugin.s2cells.regionLayer, true);
 
-    $("<style>")
-    .prop("type", "text/css")
-    .html(".plugin-regions-name {\
-      font-size: 14px;\
-      font-weight: bold;\
-      color: gold;\
-      opacity: 0.7;\
-      text-align: center;\
-      text-shadow: -1px -1px #000, 1px -1px #000, -1px 1px #000, 1px 1px #000, 0 0 2px #000; \
-      pointer-events: none;\
-    }")
-    .appendTo("head");
+    map.on('moveend', window.plugin.s2cells.update);
 
-    addLayerGroup('Score Regions', window.plugin.regions.regionLayer, true);
-
-    map.on('moveend', window.plugin.regions.update);
-
-    addHook('search', window.plugin.regions.search);
-
-    window.plugin.regions.update();
-  };
-
-  window.plugin.regions.FACE_NAMES = [ 'AF', 'AS', 'NR', 'PA', 'AM', 'ST' ];
-  window.plugin.regions.CODE_WORDS = [
-    'ALPHA',    'BRAVO',   'CHARLIE', 'DELTA',
-    'ECHO',     'FOXTROT', 'GOLF',    'HOTEL',
-    'JULIET',   'KILO',    'LIMA',    'MIKE',
-    'NOVEMBER', 'PAPA',    'ROMEO',   'SIERRA',
-  ];
-
-  // This regexp is quite forgiving. Dashes are allowed between all components, each dash and leading zero is optional.
-  // All whitespace is removed in onSearch(). If the first or both the first and second component are omitted, they are
-  // replaced with the current cell's coordinates (=the cell which contains the center point of the map). If the last
-  // component is ommited, the 4x4 cell group is used.
-  window.plugin.regions.REGEXP = new RegExp('^(?:(?:(' + plugin.regions.FACE_NAMES.join('|') + ')-?)?((?:1[0-6])|(?:0?[1-9]))-?)?(' +
-  plugin.regions.CODE_WORDS.join('|') + ')(?:-?((?:1[0-5])|(?:0?\\d)))?$', 'i');
-
-  window.plugin.regions.regionName = function(cell) {
-    // ingress does some odd things with the naming. for some faces, the i and j coords are flipped when converting
-    // (and not only the names - but the full quad coords too!). easiest fix is to create a temporary cell with the coords
-    // swapped
-    if (cell.face == 1 || cell.face == 3 || cell.face == 5) {
-      cell = S2.S2Cell.FromFaceIJ ( cell.face, [cell.ij[1], cell.ij[0]], cell.level );
-    }
-
-    // first component of the name is the face
-    var name = window.plugin.regions.FACE_NAMES[cell.face];
-
-    if (cell.level >= 4) {
-      // next two components are from the most signifitant four bits of the cell I/J
-      var regionI = cell.ij[0] >> (cell.level-4);
-      var regionJ = cell.ij[1] >> (cell.level-4);
-
-      name += zeroPad(regionI+1,2)+'-'+window.plugin.regions.CODE_WORDS[regionJ];
-    }
-
-    if (cell.level >= 6) {
-      // the final component is based on the hibbert curve for the relevant cell
-      var facequads = cell.getFaceAndQuads();
-      var number = facequads[1][4]*4+facequads[1][5];
-
-      name += '-'+zeroPad(number,2);
-    }
-
-
-    return name;
-  };
-
-  window.plugin.regions.search = function(query) {
-    var terms = query.term.replace(/\s+/g, '').split(/[,;]/);
-    var matches = terms.map(function(string) {
-      return string.match(window.plugin.regions.REGEXP);
-    });
-    if(!matches.every(function(match) { return match !== null; })) return;
-
-    var currentCell = window.plugin.regions.regionName(S2.S2Cell.FromLatLng(map.getCenter(), 6));
-
-    matches.forEach(function(match) {
-      if(!match[1])
-      match[1] = currentCell.substr(0, 2);
-      else
-      match[1] = match[1].toUpperCase();
-
-      if(!match[2])
-      match[2] = currentCell.substr(2,2);
-
-      match[3] = match[3].toUpperCase();
-
-      var result = window.plugin.regions.getSearchResult(match);
-      if(result) query.addResult(result);
-    });
+    window.plugin.s2cells.update();
   };
 
   // rot and d2xy from Wikipedia
-  window.plugin.regions.rot = function(n, x, y, rx, ry) {
+  window.plugin.s2cells.rot = function(n, x, y, rx, ry) {
     if(ry == 0) {
       if(rx == 1) {
         x = n-1 - x;
         y = n-1 - y;
       }
-
       return [y, x];
     }
     return [x, y];
   }
-  window.plugin.regions.d2xy = function(n, d) {
+  window.plugin.s2cells.d2xy = function(n, d) {
     var rx, ry, s, t = d, xy = [0, 0];
     for(s=1; s<n; s*=2) {
       rx = 1 & (t/2);
       ry = 1 & (t ^ rx);
-      xy = window.plugin.regions.rot(s, xy[0], xy[1], rx, ry);
+      xy = window.plugin.s2cells.rot(s, xy[0], xy[1], rx, ry);
       xy[0] += s * rx;
       xy[1] += s * ry;
       t /= 4;
@@ -497,55 +367,9 @@ function wrapper(plugin_info) {
     return xy;
   };
 
-  window.plugin.regions.getSearchResult = function(match) {
-    var faceId = window.plugin.regions.FACE_NAMES.indexOf(match[1]);
-    var id1 = parseInt(match[2]);
-    var codeWordId = window.plugin.regions.CODE_WORDS.indexOf(match[3]);
-    var id2 = match[4] === undefined ? undefined : parseInt(match[4]);
+  window.plugin.s2cells.update = function() {
 
-    if(faceId === -1 || id1 < 1 && id1 > 16 || codeWordId === -1 || id2 < 0 || id2 > 15) return;
-
-    // looks good. now we need the face/i/j values for this cell
-
-    // face is used as-is
-
-    // id1 is the region 'i' value (first 4 bits), codeword is the 'j' value (first 4 bits)
-    var regionI = id1-1;
-    var regionJ = codeWordId;
-
-    var result = {}, level;
-
-    if(id2 === undefined) {
-      result.description = 'Regional score cells (cluster of 16 cells)';
-      result.icon = 'data:image/svg+xml;base64,'+btoa('<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" version="1.1">\n	<path style="fill:orange;stroke:none" d="M 1,3.5 9,0 11,8.5 3,12 z"/>\n</svg>\n'.replace(/orange/, 'gold'));
-      level = 4;
-    } else {
-      result.description = 'Regional score cell';
-      result.icon = 'data:image/svg+xml;base64,'+btoa('<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" version="1.1">\n	<path style="fill:orange;stroke:none" d="M 1,3.5 9,0 11,8.5 3,12 z"/>\n</svg>\n');
-      level = 6;
-
-      var xy = window.plugin.regions.d2xy(4, id2);
-      regionI = (regionI << 2) + xy[0];
-      regionJ = (regionJ << 2) + xy[1];
-    }
-
-    // as in the name-construction above, for odd numbered faces, the I and J need swapping
-    var cell = (faceId % 2 == 1)
-    ? S2.S2Cell.FromFaceIJ(faceId, [regionJ,regionI], level)
-    : S2.S2Cell.FromFaceIJ(faceId, [regionI,regionJ], level);
-
-    var corners = cell.getCornerLatLngs();
-
-    result.title = window.plugin.regions.regionName(cell);
-    result.layer = L.geodesicPolygon(corners, { fill: false, color: 'red', clickable: false });
-    result.bounds = L.latLngBounds(corners);
-
-    return result;
-  };
-
-  window.plugin.regions.update = function() {
-
-    window.plugin.regions.regionLayer.clearLayers();
+    window.plugin.s2cells.regionLayer.clearLayers();
 
     var bounds = map.getBounds();
 
@@ -564,7 +388,7 @@ function wrapper(plugin_info) {
 
         if (cellBounds.intersects(bounds)) {
           // on screen - draw it
-          window.plugin.regions.drawCell(cell);
+          window.plugin.s2cells.drawCell(cell);
 
           // and recurse to our neighbors
           var neighbors = cell.getNeighbors();
@@ -577,18 +401,15 @@ function wrapper(plugin_info) {
     };
 
     // centre cell
-    var zoom = map.getZoom();
-    var maxzoom = 16;
-    if (window.plugin.showcells.cellLevel <= 14) maxzoom = 10;
-    if (window.plugin.showcells.cellLevel <= 8) maxzoom = 5;
-    if (zoom >= maxzoom) {  // 5 // ;;;;
-      // var cellSize = zoom>=7 ? 6 : 4;  // ;;;;vib
-      var cellSize = window.plugin.showcells.cellLevel;
-      var cell = S2.S2Cell.FromLatLng ( map.getCenter(), cellSize );
-
-      drawCellAndNeighbors(cell);
+    if (map.getZoom() >= 18) {
+      var mapCenter = map.getCenter();
+      var cell19 = S2.S2Cell.FromLatLng(mapCenter, 19);
+      drawCellAndNeighbors(cell19);
+      var cell17 = S2.S2Cell.FromLatLng(mapCenter, 17);
+      drawCellAndNeighbors(cell17);
+      var cell14 = S2.S2Cell.FromLatLng(mapCenter, 14);
+      drawCellAndNeighbors(cell14);
     }
-
 
     // the six cube side boundaries. we cheat by hard-coding the coords as it's simple enough
     var latLngs = [ [45,-180], [35.264389682754654,-135], [35.264389682754654,-45], [35.264389682754654,45], [35.264389682754654,135], [45,180]];
@@ -599,74 +420,42 @@ function wrapper(plugin_info) {
       // the geodesic line code can't handle a line/polyline spanning more than (or close to?) 180 degrees, so we draw
       // each segment as a separate line
       var poly1 = L.geodesicPolyline ( [latLngs[i], latLngs[i+1]], globalCellOptions );
-      window.plugin.regions.regionLayer.addLayer(poly1);
+      window.plugin.s2cells.regionLayer.addLayer(poly1);
 
       //southern mirror of the above
       var poly2 = L.geodesicPolyline ( [[-latLngs[i][0],latLngs[i][1]], [-latLngs[i+1][0], latLngs[i+1][1]]], globalCellOptions );
-      window.plugin.regions.regionLayer.addLayer(poly2);
+      window.plugin.s2cells.regionLayer.addLayer(poly2);
     }
 
     // and the north-south lines. no need for geodesic here
     for (var i=-135; i<=135; i+=90) {
       var poly = L.polyline ( [[35.264389682754654,i], [-35.264389682754654,i]], globalCellOptions );
-      window.plugin.regions.regionLayer.addLayer(poly);
+      window.plugin.s2cells.regionLayer.addLayer(poly);
     }
   }
 
-  window.plugin.regions.drawCell = function(cell) {
+  window.plugin.s2cells.drawCell = function(cell) {
 
     //TODO: move to function - then call for all cells on screen
 
     // corner points
     var corners = cell.getCornerLatLngs();
 
-    // center point
-    var center = cell.getLatLng();
-
-    // name
-    var name = window.plugin.regions.regionName(cell);
-
-
-    var color = cell.level == 6 ? 'gold' : 'orange';
+    var color = 'orange';
+    if (cell.level == 14) { color = 'red'; }
+    if (cell.level == 17) { color = 'blue'; }
+    if (cell.level == 19) { color = 'gold'; }
 
     // the level 6 cells have noticible errors with non-geodesic lines - and the larger level 4 cells are worse
     // NOTE: we only draw two of the edges. as we draw all cells on screen, the other two edges will either be drawn
     // from the other cell, or be off screen so we don't care
     var region = L.geodesicPolyline([corners[0],corners[1],corners[2]], {fill: false, color: color, opacity: 0.5, weight: 5, clickable: false });
 
-    window.plugin.regions.regionLayer.addLayer(region);
+    window.plugin.s2cells.regionLayer.addLayer(region);
 
-    // move the label if we're at a high enough zoom level and it's off screen
-    if (map.getZoom() >= 9) {
-      var namebounds = map.getBounds().pad(-0.1); // pad 10% inside the screen bounds
-      if (!namebounds.contains(center)) {
-        // name is off-screen. pull it in so it's inside the bounds
-        var newlat = Math.max(Math.min(center.lat, namebounds.getNorth()), namebounds.getSouth());
-        var newlng = Math.max(Math.min(center.lng, namebounds.getEast()), namebounds.getWest());
-
-        var newpos = L.latLng(newlat,newlng);
-
-        // ensure the new position is still within the same cell
-        var newposcell = S2.S2Cell.FromLatLng ( newpos, 6 );
-        if ( newposcell.toString() == cell.toString() ) {
-          center=newpos;
-        }
-        // else we leave the name where it was - offscreen
-      }
-    }
-
-    var marker = L.marker(center, {
-      icon: L.divIcon({
-        className: 'plugin-regions-name',
-        iconAnchor: [100,5],
-        iconSize: [200,10],
-        html: name,
-      })
-    });
-    //window.plugin.regions.regionLayer.addLayer(marker);  // ;;;;vib
   };
 
-  var setup =  window.plugin.regions.setup;
+  var setup = window.plugin.s2cells.setup;
 
   // PLUGIN END //////////////////////////////////////////////////////////
 
