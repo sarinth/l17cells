@@ -1,13 +1,13 @@
 // ==UserScript==
-// @id             iitc-plugin-l17cells@vib
-// @name           IITC plugin: Show Level 17 Cells
-// @author         vib
+// @id             iitc-plugin-s2cells
+// @name           IITC plugin: Show s2 level 14, 17, 19 cells with different colors
+// @author         sarinth
 // @category       Layer
-// @version        0.1.5
-// @namespace      https://github.com/vibrunazo/l17cells
-// @updateURL      https://raw.githubusercontent.com/vibrunazo/l17cells/master/l17cells.meta.js
-// @downloadURL    https://raw.githubusercontent.com/vibrunazo/l17cells/master/l17cells.user.js
-// @description    IITC: Shows level 17 cells on the map
+// @version        0.1
+// @namespace      https://github.com/sarinth/s2
+// @updateURL      https://raw.githubusercontent.com/sarinth/s2/master/s2cells.meta.js
+// @downloadURL    https://raw.githubusercontent.com/sarinth/s2/master/s2cells.user.js
+// @description    IITC: Shows s2 level 14, 17, 19 cells with different colors
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
