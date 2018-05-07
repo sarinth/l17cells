@@ -3,7 +3,7 @@
 // @name           IITC plugin: Show s2 level 14, 17, 19 cells with different colors
 // @author         sarinth
 // @category       Layer
-// @version        0.1
+// @version        0.2
 // @namespace      https://github.com/sarinth/s2
 // @updateURL      https://raw.githubusercontent.com/sarinth/s2/master/s2cells.meta.js
 // @downloadURL    https://raw.githubusercontent.com/sarinth/s2/master/s2cells.user.js
@@ -33,7 +33,7 @@ function wrapper(plugin_info) {
   //PLUGIN AUTHORS: writing a plugin outside of the IITC build environment? if so, delete these lines!!
   //(leaving them in place might break the 'About IITC' page or break update checks)
   plugin_info.buildName = 's2cells';
-  plugin_info.dateTimeVersion = '20180506';
+  plugin_info.dateTimeVersion = '20180507';
   plugin_info.pluginId = 's2cells';
   //END PLUGIN AUTHORS NOTE
 
@@ -400,13 +400,17 @@ function wrapper(plugin_info) {
 
     };
 
-    // centre cell
-    if (map.getZoom() >= 18) {
+    var zoom = map.getZoom();
+    if (zoom >= 15) {
       var mapCenter = map.getCenter();
-      var cell19 = S2.S2Cell.FromLatLng(mapCenter, 19);
-      drawCellAndNeighbors(cell19);
-      var cell17 = S2.S2Cell.FromLatLng(mapCenter, 17);
-      drawCellAndNeighbors(cell17);
+      if (zoom >= 18) {
+          var cell19 = S2.S2Cell.FromLatLng(mapCenter, 19);
+          drawCellAndNeighbors(cell19);
+      }
+      if (zoom >= 17) {
+          var cell17 = S2.S2Cell.FromLatLng(mapCenter, 17);
+          drawCellAndNeighbors(cell17);
+      }
       var cell14 = S2.S2Cell.FromLatLng(mapCenter, 14);
       drawCellAndNeighbors(cell14);
     }
