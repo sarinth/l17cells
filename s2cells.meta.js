@@ -3,7 +3,7 @@
 // @name           IITC plugin: Show s2 level 14, 17, 19 cells with different colors
 // @author         sarinth
 // @category       Layer
-// @version        0.1
+// @version        0.2
 // @namespace      https://github.com/sarinth/s2
 // @updateURL      https://raw.githubusercontent.com/sarinth/s2/master/s2cells.meta.js
 // @downloadURL    https://raw.githubusercontent.com/sarinth/s2/master/s2cells.user.js
