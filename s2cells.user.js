@@ -1,13 +1,13 @@
 // ==UserScript==
 // @id             iitc-plugin-s2cells
-// @name           IITC plugin: Show s2 level 14, 17, 19 cells with different colors
+// @name           IITC plugin: Show s2 level 6, 14, 17, 19 cells with different colors
 // @author         sarinth
 // @category       Layer
-// @version        0.2
+// @version        0.3
 // @namespace      https://github.com/sarinth/s2
 // @updateURL      https://raw.githubusercontent.com/sarinth/s2/master/s2cells.meta.js
 // @downloadURL    https://raw.githubusercontent.com/sarinth/s2/master/s2cells.user.js
-// @description    IITC: Show s2 level 14, 17, 19 cells with different colors
+// @description    IITC: Show s2 level 6, 14, 17, 19 cells with different colors
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
@@ -401,8 +401,12 @@ function wrapper(plugin_info) {
     };
 
     var zoom = map.getZoom();
+    var mapCenter = map.getCenter();
+    
+    var cell6 = S2.S2Cell.FromLatLng(mapCenter, 6);
+    drawCellAndNeighbors(cell6);
+
     if (zoom >= 15) {
-      var mapCenter = map.getCenter();
       if (zoom >= 18) {
           var cell19 = S2.S2Cell.FromLatLng(mapCenter, 19);
           drawCellAndNeighbors(cell19);
