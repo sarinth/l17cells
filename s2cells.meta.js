@@ -1,13 +1,13 @@
 // ==UserScript==
 // @id             iitc-plugin-s2cells
-// @name           IITC plugin: Show s2 level 14, 17, 19 cells with different colors
+// @name           IITC plugin: Show s2 level 6, 14, 17, 19 cells with different colors
 // @author         sarinth
 // @category       Layer
-// @version        0.2
+// @version        0.3
 // @namespace      https://github.com/sarinth/s2
 // @updateURL      https://raw.githubusercontent.com/sarinth/s2/master/s2cells.meta.js
 // @downloadURL    https://raw.githubusercontent.com/sarinth/s2/master/s2cells.user.js
-// @description    IITC: Shows s2 level 14, 17, 19 cells with different colors
+// @description    IITC: Shows s2 level 6, 14, 17, 19 cells with different colors
 // @include        https://*.ingress.com/intel*
 // @include        http://*.ingress.com/intel*
 // @match          https://*.ingress.com/intel*
